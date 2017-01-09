@@ -5,11 +5,10 @@ Figaro.application = Figaro::Application.new(environment: 'production', path: Fi
 Figaro.load
  
 class TwitterClient
-  attr_reader :last_reply_id
   RESPONSE_TIMESPAN = 60 * 60 * 24
 
-  def initialize
-   @last_reply_id = "1" 
+  def last_reply_id 
+   @last_reply_id ||= "1" 
   end
 
   def client
@@ -22,10 +21,8 @@ class TwitterClient
   end
 
   def respond_to_mentions
-    timeline = client.mentions_timeline(timeline_options)
     timeline.each do |mention|
       if asking_about_event?(mention.full_text) && recent_tweet?(mention.created_at)
-        puts "hit here"
         reply_with_meetup(mention)
       end
       @last_reply_id = mention.id.to_s
@@ -34,21 +31,26 @@ class TwitterClient
   end
 
   private
+  
+  def timeline
+    client.mentions_timeline(timeline_options)
+  end
 
   def asking_about_event?(tweet_text)
     event_words.any? { |w| tweet_text.downcase.include?(w) } # does their mention use our targeted words?  
   end
 
   def recent_tweet?(time_posted)
-    time_posted - RESPONSE_TIMESPAN < Time.now # posted in the last 15 min?
+    time_posted + RESPONSE_TIMESPAN >= Time.now # posted in the last 15 min?
   end
 
   def reply_with_meetup(mention)
+    puts MeetupService.generate_reponse(mention)
     puts "Replied to Tweet# #{mention.id}"
   end 
 
   def event_words
-    ["lynx","delighted!","when's the", "when is", "the next", "next class", "next event", "can you tell me", "when's denhac", "when is denhac"]
+    ["when's the", "when is", "the next", "next class", "next event", "can you tell me", "when's denhac", "when is denhac"]
   end
 
   def timeline_options
