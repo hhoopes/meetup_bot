@@ -11,7 +11,7 @@ class MeetupService
     denhac_events.each do | popular_name, meetup_name |
       mention_text = meetup_name if mention_text.include?(popular_name.to_s)
     end
-    matching = events.detect do | event |
+    events.detect do | event |
       mention_text.include? event['name'].downcase
     end
   end

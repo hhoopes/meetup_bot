@@ -6,11 +6,7 @@ Figaro.application = Figaro::Application.new(environment: 'production', path: Fi
 Figaro.load
  
 class TwitterClient
-  RESPONSE_TIMESPAN = 60 * 60 * 24 * 4 
-
-  def last_reply_id 
-   @last_reply_id ||= "1" 
-  end
+  RESPONSE_TIMESPAN = 60 * 60 * 15 
 
   def client
     @client ||= Twitter::REST::Client.new do |config|
@@ -32,6 +28,10 @@ class TwitterClient
   end
 
   private
+
+  def last_reply_id 
+   @last_reply_id ||= "1" 
+  end
   
   def timeline
     client.mentions_timeline(timeline_options)
