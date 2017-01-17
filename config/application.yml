@@ -5,6 +5,7 @@ consumer_secret: "cnqNN2kNNHvAUMXd30eAJ4CUVRnaLDAvKISFceVjNylb4IEl2Z"
 access_token: "716523-vdbPmaZWxsJSumEEOYHNwVe9QKdzhUtVjRUDBAE7Q8d"
 access_secret: "VJnTrqSYAm5Rek2GrDtVDFqML79gShwKaS2UjP11VyZau"
 
+meetup_api_key: "4c5d6e66664011203e2a437a3e6ca76"
 #
 # pusher_app_id: "2954"
 # pusher_key: 7381a978f7dd7f9a1117

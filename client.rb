@@ -1,11 +1,12 @@
 require "twitter"
 require 'pry'
+require './meetup_service'
 require 'figaro'
 Figaro.application = Figaro::Application.new(environment: 'production', path: File.expand_path('../config/application.yml', __FILE__))
 Figaro.load
  
 class TwitterClient
-  RESPONSE_TIMESPAN = 60 * 60 * 24
+  RESPONSE_TIMESPAN = 60 * 60 * 24 * 4 
 
   def last_reply_id 
    @last_reply_id ||= "1" 
@@ -45,8 +46,17 @@ class TwitterClient
   end
 
   def reply_with_meetup(mention)
-    puts MeetupService.generate_reponse(mention)
-    puts "Replied to Tweet# #{mention.id}"
+    event = MeetupService.new.generate_matching_event(mention.text)
+    tweet_text = case event[:type]
+    when :found 
+      "@#{mention.user.screen_name} See you at our next #{event[:details]['name']}! #{event[:details]['link']}"
+    when :next
+      "@#{mention.user.screen_name} This bot couldn't help, but we would love to see you at our next event! #{event[:details]['link']}" 
+    end
+    if tweet_text
+      client.update(tweet_text)
+      puts "Replied to Tweet# #{mention.id}"
+    end
   end 
 
   def event_words
